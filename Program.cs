@@ -1,3 +1,6 @@
+using Medical_Center_System.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Medical_Center_System
 {
     public class Program
@@ -8,8 +11,12 @@ namespace Medical_Center_System
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<AppDbContext>(b => b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
+
+
+           
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
