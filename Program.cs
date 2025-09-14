@@ -1,4 +1,6 @@
 using Medical_Center_System.Data;
+using Medical_Center_System.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Medical_Center_System
@@ -12,12 +14,23 @@ namespace Medical_Center_System
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<AppDbContext>(b => b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireSuperAdmin", policy => policy.RequireRole("SuperAdmin"));
+                options.AddPolicy("RequireAdminOrSuper", policy => policy.RequireRole("Admin", "SuperAdmin"));
+            });
+
+
 
             var app = builder.Build();
 
 
            
-
+         
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -30,6 +43,8 @@ namespace Medical_Center_System
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
